@@ -9,6 +9,10 @@ const error = require('./middlewares/error');
 
 const app = express();
 
+const server = require('http').Server(app)
+const io = require('socket.io')(server)
+
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -30,6 +34,14 @@ consign({})
 app.use(error.notFound);
 app.use(error.serverError);
 
-app.listen(3000, () => {
+io.sockets.on('connection', function(client) {
+    client.on('send-server', function(data) {
+        var msg = "<b>"+data.nome+":</b> "+data.msg+"<br>";
+        client.emit('send-client', msg);
+        client.broadcast.emit('send-client', msg);
+    });
+})
+
+server.listen(3000, () => {
   console.log('Ntalk no ar.');
 });
