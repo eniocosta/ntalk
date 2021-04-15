@@ -34,13 +34,10 @@ consign({})
 app.use(error.notFound);
 app.use(error.serverError);
 
-io.sockets.on('connection', function(client) {
-    client.on('send-server', function(data) {
-        var msg = "<b>"+data.nome+":</b> "+data.msg+"<br>";
-        client.emit('send-client', msg);
-        client.broadcast.emit('send-client', msg);
-    });
-})
+consign({})
+  .include('sockets')
+  .into(io)
+;
 
 server.listen(3000, () => {
   console.log('Ntalk no ar.');
